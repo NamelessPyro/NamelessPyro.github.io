@@ -300,6 +300,7 @@ body {
     gap: 2rem;
     max-width: 1000px;
     margin: 0 auto;
+    justify-items: center;
 }
 
 .donate-card {
@@ -310,6 +311,8 @@ body {
     box-shadow: var(--shadow);
     transition: all 0.3s ease;
     border: 2px solid transparent;
+    width: 100%;
+    max-width: 300px;
 }
 
 .donate-card:hover {
