@@ -163,6 +163,14 @@ async function handlePayment() {
             // Payment method created successfully
             showNotification('✓ Order confirmed! Thank you for your purchase.');
             clearCheckout(payBtn);
+            
+            // Check if user bought the profile image and redirect to download page
+            setTimeout(() => {
+                const profileImageInCart = cart.some(item => item.name === 'NamelessPyro Profile Image');
+                if (profileImageInCart) {
+                    window.location.href = 'download.html';
+                }
+            }, 2000);
         }
     } catch (err) {
         showNotification('Error: ' + err.message);
