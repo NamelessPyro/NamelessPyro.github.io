@@ -275,6 +275,7 @@ body {
 /* Donate Section */
 .donate {
     padding: 80px 20px;
+    text-align: center;
 }
 
 .donate h2 {
