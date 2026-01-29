@@ -3,23 +3,6 @@ let cart = [];
 
 // Initialize Stripe
 const stripe = Stripe('pk_live_51Suj9P5sRTWkYJXbZFjb6dnNEwnBDPNYyjUQHCB0fsuGmTQuZ54pgfodOIIb3j4jChEXl4jWLduNJW1Ruk7xol7Y00SU5HCe6I');
-let elements, cardElement;
-
-function initializeStripe() {
-    elements = stripe.elements();
-    cardElement = elements.create('card');
-    cardElement.mount('#card-element');
-
-    // Handle card errors
-    cardElement.on('change', function(event) {
-        const displayError = document.getElementById('card-errors');
-        if (event.error) {
-            displayError.textContent = event.error.message;
-        } else {
-            displayError.textContent = '';
-        }
-    });
-}
 
 function addToCart(productName, price) {
     cart.push({ name: productName, price: price });
@@ -86,120 +69,63 @@ function showNotification(message) {
     }, 2000);
 }
 
-function openCheckout() {
+function proceedToStripe() {
     if (cart.length === 0) {
         showNotification('Your cart is empty!');
         return;
     }
 
-    const modal = document.getElementById('checkout-modal');
-    const total = cart.reduce((sum, item) => sum + item.price, 0);
-    document.getElementById('checkout-total').textContent = total.toFixed(2);
-    modal.style.display = 'block';
-
-    // Initialize Stripe if not already done
-    if (!elements) {
-        initializeStripe();
-    }
-}
-
-function closeCheckout() {
-    const modal = document.getElementById('checkout-modal');
-    modal.style.display = 'none';
-}
-
-async function handlePayment() {
-    const payBtn = document.getElementById('pay-btn');
-    payBtn.disabled = true;
-    payBtn.textContent = 'Processing...';
-
-    const email = document.getElementById('email').value;
-    const name = document.getElementById('name').value;
-    const address = document.getElementById('address').value;
-    const city = document.getElementById('city').value;
-    const zip = document.getElementById('zip').value;
-
-    if (!email || !name || !address || !city || !zip) {
-        showNotification('Please fill in all fields');
-        payBtn.disabled = false;
-        payBtn.textContent = 'Pay with Stripe';
-        return;
-    }
-
-    // Validate card element
-    if (!cardElement) {
-        showNotification('Card element not loaded. Please refresh the page.');
-        payBtn.disabled = false;
-        payBtn.textContent = 'Pay with Stripe';
-        return;
-    }
-
-    const total = cart.reduce((sum, item) => sum + item.price, 0);
-
-    try {
-        // Create payment method with card details
-        const { error, paymentMethod } = await stripe.createPaymentMethod({
-            type: 'card',
-            card: cardElement,
-            billing_details: {
-                name: name,
-                email: email,
-                address: {
-                    line1: address,
-                    city: city,
-                    postal_code: zip
-                }
-            }
-        });
-
-        if (error) {
-            // Display error from Stripe
-            const errorElement = document.getElementById('card-errors');
-            errorElement.textContent = error.message;
-            showNotification('Card error: ' + error.message);
-            payBtn.disabled = false;
-            payBtn.textContent = 'Pay with Stripe';
-        } else {
-            // Payment method created successfully
-            showNotification('✓ Order confirmed! Thank you for your purchase.');
-            clearCheckout(payBtn);
-            
-            // Check if user bought the profile image and redirect to download page
-            setTimeout(() => {
-                const profileImageInCart = cart.some(item => item.name === 'NamelessPyro Profile Image');
-                if (profileImageInCart) {
-                    window.location.href = 'download.html';
-                }
-            }, 2000);
+    // Create line items for Stripe Checkout
+    const lineItems = cart.map(item => {
+        let priceId = '';
+        
+        // Map product names to Stripe Price IDs
+        if (item.name === 'NamelessPyro Profile Image') {
+            priceId = 'price_1Suj9P5sRTWkYJXbAbCdEfGh'; // Profile image price ID
+        } else if (item.name === 'Classic T-Shirt') {
+            priceId = 'price_1Suj9P5sRTWkYJXbIjKlMnOp'; // T-shirt price ID
+        } else if (item.name === 'Coffee Mug') {
+            priceId = 'price_1Suj9P5sRTWkYJXbQrStUvWx'; // Mug price ID
         }
-    } catch (err) {
-        showNotification('Error: ' + err.message);
-        payBtn.disabled = false;
-        payBtn.textContent = 'Pay with Stripe';
-    }
+        // Add more products as needed
+        
+        return {
+            price: priceId,
+            quantity: 1
+        };
+    });
+
+    // Redirect to Stripe Checkout
+    // You need to create a backend endpoint that creates a Checkout Session
+    // For now, use Stripe's Payment Link feature
+    redirectToPayment();
 }
 
-function clearCheckout(payBtn) {
+function redirectToPayment() {
+    // This is a simplified solution - in production, you'd use a backend
+    const total = cart.reduce((sum, item) => sum + item.price, 0);
+    const amountInCents = Math.round(total * 100);
+    
+    // Create a simple redirect to Stripe (you'll need to set up Payment Links)
+    // For now, show instructions
+    showNotification('Redirecting to payment...');
+    
+    // Calculate total and redirect
     setTimeout(() => {
-        cart = [];
-        updateCart();
-        closeCheckout();
-        payBtn.disabled = false;
-        payBtn.textContent = 'Pay with Stripe';
-        document.getElementById('email').value = '';
-        document.getElementById('name').value = '';
-        document.getElementById('address').value = '';
-        document.getElementById('city').value = '';
-        document.getElementById('zip').value = '';
-    }, 1500);
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-    const modal = document.getElementById('checkout-modal');
-    if (event.target === modal) {
-        closeCheckout();
-    }
+        // Create a dynamic checkout - this requires backend setup
+        // As a temporary solution, open Stripe hosted checkout
+        const sessionData = {
+            items: cart.map(item => ({
+                name: item.name,
+                amount: Math.round(item.price * 100),
+                currency: 'usd'
+            }))
+        };
+        
+        // Redirect to a Stripe Payment Link (create one manually on Stripe dashboard)
+        // https://dashboard.stripe.com/payment-links
+        window.location.href = 'checkout-redirect.html?total=' + Math.round(total * 100);
+    }, 500);
 }
 
 // Initialize cart display
