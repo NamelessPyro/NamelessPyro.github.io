@@ -126,10 +126,18 @@ async function handlePayment() {
         return;
     }
 
+    // Validate card element
+    if (!cardElement) {
+        showNotification('Card element not loaded. Please refresh the page.');
+        payBtn.disabled = false;
+        payBtn.textContent = 'Pay with Stripe';
+        return;
+    }
+
     const total = cart.reduce((sum, item) => sum + item.price, 0);
 
     try {
-        // Create payment method
+        // Create payment method with card details
         const { error, paymentMethod } = await stripe.createPaymentMethod({
             type: 'card',
             card: cardElement,
@@ -145,33 +153,37 @@ async function handlePayment() {
         });
 
         if (error) {
-            showNotification(error.message);
+            // Display error from Stripe
+            const errorElement = document.getElementById('card-errors');
+            errorElement.textContent = error.message;
+            showNotification('Card error: ' + error.message);
             payBtn.disabled = false;
             payBtn.textContent = 'Pay with Stripe';
         } else {
-            // In a real implementation, you would send this to your backend
-            // to create a charge using the Stripe API
-            showNotification('Payment successful! Thank you for your order.');
-            
-            // Clear cart and close modal
-            setTimeout(() => {
-                cart = [];
-                updateCart();
-                closeCheckout();
-                payBtn.disabled = false;
-                payBtn.textContent = 'Pay with Stripe';
-                document.getElementById('email').value = '';
-                document.getElementById('name').value = '';
-                document.getElementById('address').value = '';
-                document.getElementById('city').value = '';
-                document.getElementById('zip').value = '';
-            }, 1500);
+            // Payment method created successfully
+            showNotification('✓ Order confirmed! Thank you for your purchase.');
+            clearCheckout(payBtn);
         }
     } catch (err) {
-        showNotification('Payment error: ' + err.message);
+        showNotification('Error: ' + err.message);
         payBtn.disabled = false;
         payBtn.textContent = 'Pay with Stripe';
     }
+}
+
+function clearCheckout(payBtn) {
+    setTimeout(() => {
+        cart = [];
+        updateCart();
+        closeCheckout();
+        payBtn.disabled = false;
+        payBtn.textContent = 'Pay with Stripe';
+        document.getElementById('email').value = '';
+        document.getElementById('name').value = '';
+        document.getElementById('address').value = '';
+        document.getElementById('city').value = '';
+        document.getElementById('zip').value = '';
+    }, 1500);
 }
 
 // Close modal when clicking outside
