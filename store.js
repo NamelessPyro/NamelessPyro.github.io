@@ -1,6 +1,26 @@
 // Shopping cart functionality
 let cart = [];
 
+// Initialize Stripe
+const stripe = Stripe('pk_live_51Suj9P5sRTWkYJXbZFjb6dnNEwnBDPNYyjUQHCB0fsuGmTQuZ54pgfodOIIb3j4jChEXl4jWLduNJW1Ruk7xol7Y00SU5HCe6I');
+let elements, cardElement;
+
+function initializeStripe() {
+    elements = stripe.elements();
+    cardElement = elements.create('card');
+    cardElement.mount('#card-element');
+
+    // Handle card errors
+    cardElement.on('change', function(event) {
+        const displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+}
+
 function addToCart(productName, price) {
     cart.push({ name: productName, price: price });
     updateCart();
@@ -64,6 +84,102 @@ function showNotification(message) {
             document.body.removeChild(notification);
         }, 300);
     }, 2000);
+}
+
+function openCheckout() {
+    if (cart.length === 0) {
+        showNotification('Your cart is empty!');
+        return;
+    }
+
+    const modal = document.getElementById('checkout-modal');
+    const total = cart.reduce((sum, item) => sum + item.price, 0);
+    document.getElementById('checkout-total').textContent = total.toFixed(2);
+    modal.style.display = 'block';
+
+    // Initialize Stripe if not already done
+    if (!elements) {
+        initializeStripe();
+    }
+}
+
+function closeCheckout() {
+    const modal = document.getElementById('checkout-modal');
+    modal.style.display = 'none';
+}
+
+async function handlePayment() {
+    const payBtn = document.getElementById('pay-btn');
+    payBtn.disabled = true;
+    payBtn.textContent = 'Processing...';
+
+    const email = document.getElementById('email').value;
+    const name = document.getElementById('name').value;
+    const address = document.getElementById('address').value;
+    const city = document.getElementById('city').value;
+    const zip = document.getElementById('zip').value;
+
+    if (!email || !name || !address || !city || !zip) {
+        showNotification('Please fill in all fields');
+        payBtn.disabled = false;
+        payBtn.textContent = 'Pay with Stripe';
+        return;
+    }
+
+    const total = cart.reduce((sum, item) => sum + item.price, 0);
+
+    try {
+        // Create payment method
+        const { error, paymentMethod } = await stripe.createPaymentMethod({
+            type: 'card',
+            card: cardElement,
+            billing_details: {
+                name: name,
+                email: email,
+                address: {
+                    line1: address,
+                    city: city,
+                    postal_code: zip
+                }
+            }
+        });
+
+        if (error) {
+            showNotification(error.message);
+            payBtn.disabled = false;
+            payBtn.textContent = 'Pay with Stripe';
+        } else {
+            // In a real implementation, you would send this to your backend
+            // to create a charge using the Stripe API
+            showNotification('Payment successful! Thank you for your order.');
+            
+            // Clear cart and close modal
+            setTimeout(() => {
+                cart = [];
+                updateCart();
+                closeCheckout();
+                payBtn.disabled = false;
+                payBtn.textContent = 'Pay with Stripe';
+                document.getElementById('email').value = '';
+                document.getElementById('name').value = '';
+                document.getElementById('address').value = '';
+                document.getElementById('city').value = '';
+                document.getElementById('zip').value = '';
+            }, 1500);
+        }
+    } catch (err) {
+        showNotification('Payment error: ' + err.message);
+        payBtn.disabled = false;
+        payBtn.textContent = 'Pay with Stripe';
+    }
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('checkout-modal');
+    if (event.target === modal) {
+        closeCheckout();
+    }
 }
 
 // Initialize cart display

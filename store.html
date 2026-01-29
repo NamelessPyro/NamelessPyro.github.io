@@ -6,6 +6,7 @@
     <title>NamelessPyro Store - Merchandise & Digital Products</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -120,7 +121,7 @@
                     <p><strong>Total Items:</strong> <span id="cart-count">0</span></p>
                     <p><strong>Subtotal:</strong> $<span id="cart-total">0.00</span></p>
                     <p class="cart-note">Shipping and taxes calculated at checkout</p>
-                    <button class="checkout-btn">Proceed to Checkout</button>
+                    <button class="checkout-btn" onclick="openCheckout()">Proceed to Checkout</button>
                 </div>
             </div>
         </div>
@@ -134,6 +135,55 @@
             </a>
         </div>
     </section>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCheckout()">&times;</span>
+            <h2>Checkout</h2>
+            
+            <div class="checkout-form">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="your@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" placeholder="John Doe" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Shipping Address</label>
+                    <input type="text" id="address" placeholder="123 Main St" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" placeholder="New York" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="zip">ZIP Code</label>
+                        <input type="text" id="zip" placeholder="10001" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Card Details</label>
+                    <div id="card-element"></div>
+                    <div id="card-errors" role="alert"></div>
+                </div>
+
+                <div class="order-summary">
+                    <p><strong>Order Total: $<span id="checkout-total">0.00</span></strong></p>
+                </div>
+
+                <button class="pay-btn" id="pay-btn" onclick="handlePayment()">Pay with Stripe</button>
+                <button class="cancel-btn" onclick="closeCheckout()">Cancel</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
