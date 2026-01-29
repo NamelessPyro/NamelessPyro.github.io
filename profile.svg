@@ -1,0 +1,25 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="200" height="200" fill="#8B0000"/>
+  
+  <!-- Head -->
+  <circle cx="100" cy="70" r="35" fill="#1a1a1a"/>
+  
+  <!-- Eyes -->
+  <circle cx="88" cy="65" r="5" fill="#ffffff"/>
+  <circle cx="112" cy="65" r="5" fill="#ffffff"/>
+  
+  <!-- Hat -->
+  <rect x="75" y="30" width="50" height="15" rx="5" fill="#B8860B"/>
+  <ellipse cx="100" cy="30" rx="28" ry="8" fill="#DAA520"/>
+  
+  <!-- Body -->
+  <rect x="70" y="105" width="60" height="70" rx="10" fill="#2a2a2a"/>
+  
+  <!-- Shoulders/Collar -->
+  <ellipse cx="100" cy="105" rx="35" ry="15" fill="#555555"/>
+  
+  <!-- Arms -->
+  <rect x="40" y="115" width="20" height="50" rx="10" fill="#1a1a1a"/>
+  <rect x="140" y="115" width="20" height="50" rx="10" fill="#1a1a1a"/>
+</svg>

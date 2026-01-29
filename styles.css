@@ -556,6 +556,18 @@ body {
     justify-content: center;
 }
 
+.product-image.profile-image {
+    background: var(--white);
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+.product-image.profile-image img {
+    width: 100%;
+    max-width: 150px;
+    height: auto;
+}
+
 .product-card h3 {
     font-size: 1.3rem;
     margin-bottom: 0.5rem;
