@@ -170,7 +170,7 @@ body {
 
 /* Footer */
 .footer {
-    background: var(--bg-dark);
+    background: rgba(0, 0, 0, 0.8);
     color: var(--text-dim);
     text-align: center;
     padding: 2rem;
