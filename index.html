@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NamelessPyro</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Source+Code+Pro:wght@400;600;700&display=swap" rel="stylesheet">
@@ -14,37 +13,59 @@
     <!-- Terminal Window -->
     <div class="terminal">
         <div class="terminal-header">
-            <span class="terminal-title">namelesspyro@github ~ $</span>
+            <span class="terminal-title">sys_data.exe</span>
         </div>
         <div class="terminal-content">
-            <div class="terminal-line">
-                <span class="prompt">$</span> <span class="command">whoami</span>
-            </div>
-            <div class="terminal-output">NamelessPyro</div>
+            <div class="data-grid">
+                <!-- Left Column -->
+                <div class="data-column">
+                    <div class="data-section">
+                        <div class="section-label">>> USER_INFO</div>
+                        <div class="data-line"><span class="label">NAME:</span> <span class="value">NamelessPyro</span></div>
+                        <div class="data-line"><span class="label">STATUS:</span> <span class="value active">ONLINE</span></div>
+                        <div class="data-line"><span class="label">TYPE:</span> <span class="value">Developer</span></div>
+                    </div>
 
-            <div class="terminal-line">
-                <span class="prompt">$</span> <span class="command">echo "About Me"</span>
-            </div>
-            <div class="terminal-output">I am just a guy who figures it out sometimes.</div>
+                    <div class="data-section">
+                        <div class="section-label">>> PROFILE</div>
+                        <div class="data-line"><span class="label">DESC:</span> I am just a guy</div>
+                        <div class="data-line"><span class="label">WHO:</span> figures it out</div>
+                        <div class="data-line"><span class="label">WHEN:</span> sometimes</div>
+                    </div>
+                </div>
 
-            <div class="terminal-line">
-                <span class="prompt">$</span> <span class="command">ls --links</span>
-            </div>
-            <div class="terminal-output">
-                <div class="link-item"><span class="directory">youtube</span> <span class="arrow">→</span> <a href="https://www.youtube.com/@NamelessPyro" target="_blank" class="link-target">https://www.youtube.com/@NamelessPyro</a></div>
-                <div class="link-item"><span class="directory">github</span> <span class="arrow">→</span> <a href="https://github.com/NamelessPyro" target="_blank" class="link-target">https://github.com/NamelessPyro</a></div>
-                <div class="link-item"><span class="directory">discord</span> <span class="arrow">→</span> <a href="https://discord.gg/WGzAb7QY2H" target="_blank" class="link-target">https://discord.gg/WGzAb7QY2H</a></div>
+                <!-- Right Column -->
+                <div class="data-column">
+                    <div class="data-section">
+                        <div class="section-label">>> NETWORKS</div>
+                        <div class="data-line"><span class="label">YOUTUBE:</span> <a href="https://www.youtube.com/@NamelessPyro" target="_blank" class="link">@NamelessPyro</a></div>
+                        <div class="data-line"><span class="label">GITHUB:</span> <a href="https://github.com/NamelessPyro" target="_blank" class="link">NamelessPyro</a></div>
+                        <div class="data-line"><span class="label">DISCORD:</span> <a href="https://discord.gg/WGzAb7QY2H" target="_blank" class="link">Server</a></div>
+                    </div>
+
+                    <div class="data-section">
+                        <div class="section-label">>> SKILLS</div>
+                        <div class="data-line"><span class="label">GAME_DEV:</span> <span class="value">TRUE</span></div>
+                        <div class="data-line"><span class="label">CODING:</span> <span class="value">TRUE</span></div>
+                        <div class="data-line"><span class="label">ART:</span> <span class="value">TRUE</span></div>
+                    </div>
+                </div>
             </div>
 
-            <div class="terminal-line cursor-blink">
-                <span class="prompt">$</span> <span class="input">_</span>
+            <!-- Status bar -->
+            <div class="status-bar">
+                <span class="status-item">SYS_ONLINE</span>
+                <span class="status-separator">|</span>
+                <span class="status-item">CONNECTED</span>
+                <span class="status-separator">|</span>
+                <span class="status-item">READY</span>
             </div>
         </div>
     </div>
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 NamelessPyro</p>
+            <p>&copy; 2026 NamelessPyro | sys_v1.0</p>
         </div>
     </footer>
 

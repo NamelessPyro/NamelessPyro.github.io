@@ -1,16 +1,18 @@
-// Terminal typing animation
+// Data reveal animation on page load
 document.addEventListener('DOMContentLoaded', function() {
-    const terminalLines = document.querySelectorAll('.terminal-line');
-    const terminalOutput = document.querySelectorAll('.terminal-output');
+    const dataLines = document.querySelectorAll('.data-line');
+    const dataSections = document.querySelectorAll('.data-section');
     
-    // Stagger animation for each line
-    terminalLines.forEach((line, index) => {
-        line.style.animationDelay = `${index * 0.3}s`;
+    // Stagger animation for sections
+    dataSections.forEach((section, index) => {
+        section.style.opacity = '0';
+        section.style.animation = `fadeInUp 0.6s ease-out ${index * 0.1}s forwards`;
     });
 
-    terminalOutput.forEach((output, index) => {
-        output.style.opacity = '0';
-        output.style.animation = `typewrite 0.5s ease-out ${(index + 1) * 0.3}s forwards`;
+    // Stagger animation for data lines
+    dataLines.forEach((line, index) => {
+        line.style.opacity = '0';
+        line.style.animation = `fadeInUp 0.4s ease-out ${0.3 + index * 0.05}s forwards`;
     });
 });
 
@@ -27,5 +29,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
 
 
