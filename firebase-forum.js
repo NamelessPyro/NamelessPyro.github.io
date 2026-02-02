@@ -115,6 +115,23 @@ window.handleCreatePost = function() {
     }
 };
 
+// Function to sync replies to Firebase
+window.syncReplyToFirebase = function(postId, reply, post) {
+    if (!firebaseReady || typeof database !== 'undefined' && !post.firebaseId) {
+        console.warn('Cannot sync reply - post not in Firebase');
+        return;
+    }
+
+    if (post.firebaseId) {
+        const postRef = database.ref(FORUM_POSTS_REF + '/' + post.firebaseId);
+        postRef.update({
+            replies: post.replies
+        }).catch(error => {
+            console.warn('Error syncing reply to Firebase:', error);
+        });
+    }
+};
+
 // Function to manually sync posts to Firebase
 window.syncPostsToFirebase = function() {
     if (!firebaseReady || typeof database === 'undefined') {

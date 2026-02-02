@@ -182,6 +182,7 @@ function createPostElement(post) {
 
     const replyForm = document.createElement('div');
     replyForm.className = 'comment-form';
+    replyForm.setAttribute('data-post-id', post.id);
     const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
     
     if (currentUser) {
@@ -370,6 +371,11 @@ function handleCreateReply(postId) {
 
         post.replies.push(reply);
         localStorage.setItem('forumPosts', JSON.stringify(posts));
+
+        // Sync to Firebase
+        if (typeof window.syncReplyToFirebase === 'function') {
+            window.syncReplyToFirebase(postId, reply, post);
+        }
 
         // Increment post count
         if (window.incrementPostCount) {
