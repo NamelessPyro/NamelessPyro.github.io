@@ -1,6 +1,6 @@
 // Configuration
 const CONFIG = {
-    PASSWORD: 'password123',
+    PASSWORD: 'SalemAngel1388',
     MAX_FILE_SIZE: 10 * 1024 * 1024
 };
 
