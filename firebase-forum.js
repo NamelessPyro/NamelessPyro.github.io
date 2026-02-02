@@ -2,6 +2,7 @@
 // This module syncs forum data with Firebase Realtime Database
 
 let firebaseReady = false;
+let firebaseSyncInitialized = false;
 
 // Wait for Firebase to initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -22,12 +23,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// Also support deferred initialization
+window.onModulesReady = function() {
+    if (!firebaseSyncInitialized && firebaseReady && typeof database !== 'undefined') {
+        console.log('Modules ready, syncing Firebase...');
+        setupFirebaseSync();
+    }
+};
+
 function setupFirebaseSync() {
+    if (firebaseSyncInitialized) {
+        console.log('Firebase sync already initialized');
+        return;
+    }
+
     if (!firebaseReady || typeof database === 'undefined') {
         console.log('Firebase not available, using local storage');
         return;
     }
 
+    firebaseSyncInitialized = true;
     console.log('Firebase ready, loading posts...');
 
     // Load existing posts from Firebase
@@ -117,19 +132,22 @@ window.handleCreatePost = function() {
 
 // Function to sync replies to Firebase
 window.syncReplyToFirebase = function(postId, reply, post) {
-    if (!firebaseReady || typeof database !== 'undefined' && !post.firebaseId) {
-        console.warn('Cannot sync reply - post not in Firebase');
+    if (!firebaseReady || typeof database === 'undefined') {
+        console.warn('Firebase not available for syncing reply');
         return;
     }
 
-    if (post.firebaseId) {
-        const postRef = database.ref(FORUM_POSTS_REF + '/' + post.firebaseId);
-        postRef.update({
-            replies: post.replies
-        }).catch(error => {
-            console.warn('Error syncing reply to Firebase:', error);
-        });
+    if (!post.firebaseId) {
+        console.warn('Cannot sync reply - post not yet in Firebase');
+        return;
     }
+
+    const postRef = database.ref(FORUM_POSTS_REF + '/' + post.firebaseId);
+    postRef.update({
+        replies: post.replies
+    }).catch(error => {
+        console.warn('Error syncing reply to Firebase:', error);
+    });
 };
 
 // Function to manually sync posts to Firebase
