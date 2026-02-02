@@ -1,7 +1,14 @@
+// Configuration
+const CONFIG = {
+    PASSWORD: 'password123',
+    MAX_FILE_SIZE: 10 * 1024 * 1024
+};
+
 // File upload handling
 document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.getElementById('fileInput');
     const uploadBox = document.querySelector('.upload-box');
+    const passwordInput = document.getElementById('uploadPassword');
     const fileListContainer = document.getElementById('fileListContainer');
 
     // Drag and drop functionality
@@ -29,12 +36,38 @@ document.addEventListener('DOMContentLoaded', function() {
         handleFiles(e.target.files);
     });
 
+    // Add delete button for each file
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-file')) {
+            const fileName = e.target.dataset.name;
+            deleteFile(fileName);
+        }
+    });
+
     function handleFiles(files) {
         if (files.length === 0) return;
 
+        const password = passwordInput.value.trim();
+
+        if (!password) {
+            alert('Please enter a password to upload files.');
+            return;
+        }
+
+        if (password !== CONFIG.PASSWORD) {
+            alert('Incorrect password. Upload denied.');
+            return;
+        }
+
         Array.from(files).forEach(file => {
+            if (file.size > CONFIG.MAX_FILE_SIZE) {
+                alert(`File "${file.name}" is too large. Max size is 10MB.`);
+                return;
+            }
             addFileToList(file);
         });
+
+        passwordInput.value = '';
     }
 
     function addFileToList(file) {
@@ -54,11 +87,12 @@ document.addEventListener('DOMContentLoaded', function() {
             <span class="col-time">${time}</span>
             <span class="col-size">${size}</span>
             <span class="col-name file-link" data-name="${file.name}">${file.name}</span>
+            <span class="delete-file" data-name="${file.name}" title="Delete">×</span>
         `;
         
         fileListContainer.appendChild(fileItem);
 
-        // Store file in localStorage (basic implementation)
+        // Store file in localStorage
         storeFile(file);
     }
 
@@ -108,6 +142,7 @@ function loadStoredFiles() {
                 <span class="col-time">${file.time}</span>
                 <span class="col-size">${formatFileSize(file.size)}</span>
                 <span class="col-name file-link" onclick="downloadFile('${file.name}')">${file.name}</span>
+                <span class="delete-file" data-name="${file.name}" title="Delete">×</span>
             `;
             fileListContainer.appendChild(fileItem);
         });
@@ -139,6 +174,13 @@ function downloadFile(fileName) {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
     }
+}
+
+function deleteFile(fileName) {
+    const files = JSON.parse(localStorage.getItem('uploadedFiles')) || [];
+    const updatedFiles = files.filter(f => f.name !== fileName);
+    localStorage.setItem('uploadedFiles', JSON.stringify(updatedFiles));
+    loadStoredFiles();
 }
 
 // Smooth scroll for any anchor links

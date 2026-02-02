@@ -254,7 +254,7 @@ body {
 .file-item {
     display: flex;
     gap: 12px;
-    padding: 4px 0;
+    padding: 4px 10px;
     align-items: center;
     animation: fadeInUp 0.3s ease-out;
 }
@@ -349,6 +349,58 @@ body {
     text-shadow: 0 0 10px rgba(255, 51, 51, 0.8);
 }
 
+/* Password Input Styles */
+.password-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+    padding: 0 10px;
+}
 
+.password-input label {
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
 
+.password-field {
+    background-color: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 5px 8px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
 
+.password-field:focus {
+    border-color: var(--text-color);
+    box-shadow: 0 0 8px rgba(255, 51, 51, 0.5);
+}
+
+.password-field::placeholder {
+    color: var(--text-dim);
+}
+
+/* Upload Section */
+.upload-section {
+    padding: 10px;
+}
+
+/* Delete Button Styles */
+.delete-file {
+    margin-left: auto;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 1.4rem;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    padding: 0 8px;
+    line-height: 1;
+}
+
+.delete-file:hover {
+    color: var(--text-color);
+    text-shadow: 0 0 10px rgba(255, 51, 51, 0.8);
+}
