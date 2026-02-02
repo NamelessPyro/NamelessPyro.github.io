@@ -177,6 +177,13 @@ body {
     border-top: 1px solid var(--border-color);
     font-size: 0.8rem;
     letter-spacing: 0.5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer .container {
+    text-align: center;
 }
 
 /* Responsive */
