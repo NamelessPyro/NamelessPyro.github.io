@@ -5,7 +5,6 @@ const CONFIG = {
 
 // DOM Elements
 const forumContainer = document.getElementById('forumContainer');
-const postPasswordInput = document.getElementById('postPassword');
 const postTitleInput = document.getElementById('postTitle');
 const postContentInput = document.getElementById('postContent');
 const postMediaInput = document.getElementById('postMedia');
@@ -35,19 +34,8 @@ function setupEventListeners() {
 }
 
 function handleCreatePost() {
-    const password = postPasswordInput.value.trim();
     const title = postTitleInput.value.trim();
     const content = postContentInput.value.trim();
-
-    if (!password) {
-        alert('Please enter the password to create a post.');
-        return;
-    }
-
-    if (password !== CONFIG.PASSWORD) {
-        alert('Incorrect password. Post creation denied.');
-        return;
-    }
 
     if (!title) {
         alert('Please enter a thread title.');
@@ -78,7 +66,6 @@ function handleCreatePost() {
     localStorage.setItem('forumPosts', JSON.stringify(posts));
 
     // Clear inputs
-    postPasswordInput.value = '';
     postTitleInput.value = '';
     postContentInput.value = '';
     postMediaInput.value = '';
