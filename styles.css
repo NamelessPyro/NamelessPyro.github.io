@@ -643,6 +643,64 @@ body {
     display: block;
 }
 
+.post-section {
+    padding: 10px;
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+.form-group label {
+    display: block;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.form-input,
+.form-textarea {
+    width: 100%;
+    background-color: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 8px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    border-color: var(--text-color);
+    box-shadow: 0 0 8px rgba(255, 51, 51, 0.5);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.submit-btn {
+    background-color: var(--bg-dark);
+    border: 1px solid var(--text-color);
+    color: var(--text-color);
+    padding: 8px 15px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 10px;
+}
+
+.submit-btn:hover {
+    background-color: rgba(255, 51, 51, 0.1);
+    text-shadow: 0 0 10px rgba(255, 51, 51, 0.8);
+    box-shadow: inset 0 0 10px rgba(255, 51, 51, 0.3);
+}
+
 .comment-form .form-group {
     display: flex;
     flex-direction: column;
