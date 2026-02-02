@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NamelessPyro - File Share</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Terminal Window -->
+    <div class="terminal">
+        <div class="terminal-header">
+            <span class="terminal-title">C:\Users\NamelessPyro\Files></span>
+        </div>
+        <div class="terminal-content">
+            <div class="command-line">
+                <span class="prompt">C:\Users\NamelessPyro\Files></span> <span class="command">dir /all</span>
+            </div>
+
+            <div class="output-section">
+                <div class="output-line">Directory of C:\Users\NamelessPyro\Files\</div>
+                <div class="output-line"></div>
+                <div class="file-table-header">
+                    <span class="col-date">Date</span>
+                    <span class="col-time">Time</span>
+                    <span class="col-size">Size</span>
+                    <span class="col-name">Name</span>
+                </div>
+                <div class="file-list-container" id="fileListContainer">
+                    <div class="file-item">
+                        <span class="col-date">02-02-2026</span>
+                        <span class="col-time">10:30</span>
+                        <span class="col-size">--</span>
+                        <span class="col-name">[FOLDER]</span>
+                    </div>
+                </div>
+                <div class="output-line"></div>
+                <div class="output-line">No files available yet.</div>
+                <div class="output-line"></div>
+            </div>
+
+            <div class="command-line">
+                <span class="prompt">C:\Users\NamelessPyro\Files></span> <span class="command">upload /new</span>
+            </div>
+
+            <div class="output-section">
+                <div class="output-line">Upload Interface Ready</div>
+                <div class="output-line"></div>
+                <div class="upload-box">
+                    <div class="upload-text">Drop files here or click to select</div>
+                    <input type="file" id="fileInput" class="file-input" multiple>
+                </div>
+                <div class="output-line"></div>
+            </div>
+
+            <div class="command-line cursor">
+                <span class="prompt">C:\Users\NamelessPyro\Files></span> <span class="input">_</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-bar">
+        <a href="index.html" class="nav-link">← Back to Home</a>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 NamelessPyro | File Share v1.0</p>
+        </div>
+    </footer>
+
+    <script src="files.js"></script>
+</body>
+</html>
