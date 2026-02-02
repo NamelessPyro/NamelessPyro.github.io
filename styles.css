@@ -24,7 +24,7 @@ body {
     font-family: 'Courier Prime', monospace;
     line-height: 1.4;
     color: var(--text-color);
-    background-color: var(--bg-dark);
+    background-color: rgba(0, 0, 0, 0.8);
     background-image: 
         repeating-linear-gradient(
             0deg,
