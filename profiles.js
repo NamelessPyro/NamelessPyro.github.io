@@ -4,6 +4,7 @@ const CURRENT_USER_KEY = 'currentUser';
 
 // DOM Elements
 const usernameInput = document.getElementById('username');
+const passwordInput = document.getElementById('password');
 const userBioInput = document.getElementById('userBio');
 const userColorInputs = document.querySelectorAll('input[name="userColor"]');
 const createProfileBtn = document.getElementById('createProfileBtn');
@@ -33,16 +34,18 @@ function setupEventListeners() {
     logoutBtn.addEventListener('click', handleLogout);
     
     // Allow Enter to create profile
-    usernameInput.addEventListener('keypress', (e) => {
+    passwordInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') handleCreateProfile();
     });
 }
 
 function handleCreateProfile() {
     const username = usernameInput.value.trim();
+    const password = passwordInput.value.trim();
     const bio = userBioInput.value.trim();
     const color = document.querySelector('input[name="userColor"]:checked').value;
 
+    // Validation
     if (!username) {
         alert('Please enter a username.');
         return;
@@ -58,22 +61,38 @@ function handleCreateProfile() {
         return;
     }
 
+    if (!password) {
+        alert('Please enter a password.');
+        return;
+    }
+
+    if (password.length < 6) {
+        alert('Password must be at least 6 characters long.');
+        return;
+    }
+
     // Check if username already exists
     const profiles = JSON.parse(localStorage.getItem(PROFILES_STORAGE_KEY)) || {};
     const userKeyLower = username.toLowerCase();
     
     if (profiles[userKeyLower]) {
-        // Username exists - attempt login
-        loginToProfile(profiles[userKeyLower]);
-        usernameInput.value = '';
-        userBioInput.value = '';
-        userColorInputs[0].checked = true;
-        return;
+        // Username exists - attempt login with password
+        const existingProfile = profiles[userKeyLower];
+        if (hashPassword(password) === existingProfile.passwordHash) {
+            loginToProfile(existingProfile);
+            clearForm();
+            return;
+        } else {
+            alert('Username exists but password is incorrect.');
+            passwordInput.focus();
+            return;
+        }
     }
 
-    // Create profile
+    // Create new profile
     const profile = {
         username: username,
+        passwordHash: hashPassword(password),
         bio: bio || 'No bio provided',
         color: color,
         joinDate: new Date().toLocaleDateString('en-US'),
@@ -90,15 +109,20 @@ function handleCreateProfile() {
     localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(profile));
 
     // Clear form
-    usernameInput.value = '';
-    userBioInput.value = '';
-    userColorInputs[0].checked = true;
+    clearForm();
 
     // Update display
     displayCurrentUser();
     loadProfiles();
     
     alert(`Profile created! Your verification code: ${profile.verified}`);
+}
+
+function clearForm() {
+    usernameInput.value = '';
+    passwordInput.value = '';
+    userBioInput.value = '';
+    userColorInputs[0].checked = true;
 }
 
 function handleLogout() {
@@ -159,18 +183,42 @@ function loadProfiles() {
             <div class="profile-details">
                 <span class="profile-bio">${escapeHtml(profile.bio)}</span>
                 <span class="profile-joined">Joined: ${profile.joinDate} | Posts: ${profile.postCount || 0}</span>
-                <span class="profile-action-hint" style="color: var(--text-dim); font-size: 0.75rem; margin-top: 4px;">Click to login</span>
+                <span class="profile-action-hint" style="color: var(--text-dim); font-size: 0.75rem; margin-top: 4px;">Click to login (password required)</span>
             </div>
         `;
-        profileItem.addEventListener('click', () => loginToProfile(profile));
+        profileItem.addEventListener('click', () => promptPasswordAndLogin(profile));
         profilesList.appendChild(profileItem);
     });
+}
+
+function promptPasswordAndLogin(profile) {
+    const password = prompt(`Enter password for ${profile.username}:`);
+    if (password === null) return; // User cancelled
+    
+    if (hashPassword(password) === profile.passwordHash) {
+        loginToProfile(profile);
+        clearForm();
+    } else {
+        alert('Incorrect password!');
+    }
 }
 
 function generateVerificationCode(username) {
     // Generate a simple verification code based on username
     const code = username.substring(0, 3).toUpperCase() + Math.random().toString(36).substring(2, 7).toUpperCase();
     return code;
+}
+
+function hashPassword(password) {
+    // Simple hash function - combines character codes with bitwise operations
+    // For a production app, use bcrypt or similar
+    let hash = 0;
+    for (let i = 0; i < password.length; i++) {
+        const char = password.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return Math.abs(hash).toString(36);
 }
 
 function escapeHtml(text) {
