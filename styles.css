@@ -78,28 +78,31 @@ body {
 }
 
 .terminal-content {
-    padding: 20px;
+    padding: 15px 20px;
     min-height: 400px;
     color: var(--text-color);
     font-size: 0.95rem;
-    line-height: 1.8;
+    line-height: 1.6;
 }
 
 .terminal-line {
-    margin: 10px 0;
+    margin: 8px 0;
     display: flex;
-    align-items: center;
-    gap: 8px;
+    align-items: flex-start;
+    gap: 0;
     animation: typewrite 0.5s ease-out;
 }
 
 .prompt {
     color: var(--secondary-color);
     font-weight: 700;
+    margin-right: 8px;
+    flex-shrink: 0;
 }
 
 .command {
     color: var(--text-color);
+    word-break: break-word;
 }
 
 .input {
@@ -131,19 +134,19 @@ body {
 }
 
 .terminal-output {
-    margin: 5px 0 15px 0;
+    margin: 2px 0 12px 28px;
     color: var(--primary-color);
-    padding-left: 30px;
     border-left: 2px solid var(--border-color);
-    padding: 10px 0 10px 20px;
+    padding-left: 12px;
 }
 
 .link-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin: 8px 0;
+    gap: 8px;
+    margin: 4px 0;
     transition: all 0.3s ease;
+    flex-wrap: wrap;
 }
 
 .link-item:hover {
@@ -153,10 +156,12 @@ body {
 .directory {
     color: var(--secondary-color);
     font-weight: 600;
+    min-width: fit-content;
 }
 
 .arrow {
     color: var(--text-dim);
+    margin: 0 4px;
 }
 
 .link-target {
@@ -164,6 +169,7 @@ body {
     text-decoration: none;
     border-bottom: 1px dotted var(--border-color);
     transition: all 0.3s ease;
+    word-break: break-all;
 }
 
 .link-target:hover {
