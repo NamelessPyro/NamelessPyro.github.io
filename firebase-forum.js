@@ -28,10 +28,14 @@ function setupFirebaseSync() {
         return;
     }
 
+    console.log('Firebase ready, loading posts...');
+
     // Load existing posts from Firebase
     const postsRef = database.ref(FORUM_POSTS_REF);
-    postsRef.on('value', (snapshot) => {
+    postsRef.once('value', (snapshot) => {
         const firebaseData = snapshot.val();
+        console.log('Firebase data:', firebaseData);
+        
         if (firebaseData) {
             // Convert Firebase object to array
             const posts = Object.keys(firebaseData).map(key => ({
@@ -42,6 +46,8 @@ function setupFirebaseSync() {
             // Sort by date (newest first)
             posts.sort((a, b) => b.createdAt - a.createdAt);
             
+            console.log('Loaded posts from Firebase:', posts.length);
+            
             // Update localStorage with Firebase data
             localStorage.setItem('forumPosts', JSON.stringify(posts));
             
@@ -49,9 +55,33 @@ function setupFirebaseSync() {
             if (typeof loadPosts === 'function') {
                 loadPosts();
             }
+        } else {
+            console.log('No posts in Firebase yet');
         }
     }, (error) => {
         console.warn('Firebase read error:', error);
+    });
+
+    // Also listen for real-time updates
+    postsRef.on('child_added', (snapshot) => {
+        console.log('New post from Firebase:', snapshot.val());
+        const posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
+        
+        // Check if post already exists
+        const postId = snapshot.key;
+        const exists = posts.some(p => p.firebaseId === postId);
+        
+        if (!exists) {
+            posts.push({
+                ...snapshot.val(),
+                firebaseId: postId
+            });
+            localStorage.setItem('forumPosts', JSON.stringify(posts));
+            
+            if (typeof loadPosts === 'function') {
+                loadPosts();
+            }
+        }
     });
 }
 
@@ -65,15 +95,23 @@ window.handleCreatePost = function() {
     
     // Then sync to Firebase if available
     if (firebaseReady && typeof database !== 'undefined') {
-        const posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
-        if (posts.length > 0) {
-            const latestPost = posts[0];
-            
-            const postsRef = database.ref(FORUM_POSTS_REF);
-            postsRef.push(latestPost).catch(error => {
-                console.warn('Firebase write error:', error);
-            });
-        }
+        setTimeout(() => {
+            const posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
+            if (posts.length > 0) {
+                const latestPost = posts[0];
+                
+                // Only push if it's a new post (not already in Firebase)
+                if (!latestPost.firebaseId) {
+                    const postsRef = database.ref(FORUM_POSTS_REF);
+                    postsRef.push(latestPost).then((snapshot) => {
+                        console.log('Post synced to Firebase:', snapshot.key);
+                    }).catch(error => {
+                        console.warn('Firebase write error:', error);
+                        alert('Warning: Could not sync post to Firebase. ' + error.message);
+                    });
+                }
+            }
+        }, 100);
     }
 };
 

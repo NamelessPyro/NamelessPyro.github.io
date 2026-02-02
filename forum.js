@@ -64,6 +64,7 @@ function handleCreatePost() {
         authorVerified: currentUser.verified,
         date: new Date().toLocaleDateString('en-US'),
         time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
+        createdAt: Date.now(),
         score: 1,
         media: selectedMediaFile,
         replies: []
