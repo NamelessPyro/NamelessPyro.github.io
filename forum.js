@@ -57,9 +57,10 @@ function handleCreatePost() {
         id: Date.now(),
         title: title,
         content: content,
-        author: 'Anonymous',
+        author: 'NamelessPyro',
         date: new Date().toLocaleDateString('en-US'),
         time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
+        score: 1,
         replies: []
     };
 
@@ -97,23 +98,45 @@ function loadPosts() {
 
 function createPostElement(post) {
     const postDiv = document.createElement('div');
-    postDiv.className = 'forum-post';
+    postDiv.className = 'reddit-post';
     postDiv.dataset.postId = post.id;
 
+    const postVote = document.createElement('div');
+    postVote.className = 'post-vote';
+    postVote.innerHTML = `
+        <button class="vote-up" data-post-id="${post.id}" title="Upvote">▲</button>
+        <span class="score">${post.score}</span>
+        <button class="vote-down" data-post-id="${post.id}" title="Downvote">▼</button>
+    `;
+
+    const postContent = document.createElement('div');
+    postContent.className = 'post-content-wrapper';
+    
     const postHeader = document.createElement('div');
     postHeader.className = 'post-header';
     postHeader.innerHTML = `
         <span class="post-title">${escapeHtml(post.title)}</span>
-        <span class="post-meta">by ${post.author} | ${post.date} ${post.time}</span>
-        <span class="delete-post" data-post-id="${post.id}" title="Delete">×</span>
+    `;
+
+    const postMeta = document.createElement('div');
+    postMeta.className = 'post-meta';
+    postMeta.innerHTML = `
+        submitted by <span class="author">${post.author}</span> 
+        to <span class="subreddit">/forum</span> 
+        on ${post.date} at ${post.time}
+        <span class="post-actions">
+            <span class="comments-link">${(post.replies || []).length} comments</span>
+            <span class="separator">•</span>
+            <span class="delete-post" data-post-id="${post.id}" title="Delete">delete</span>
+        </span>
     `;
 
     const postBody = document.createElement('div');
     postBody.className = 'post-body';
-    postBody.innerHTML = `<div class="post-content">${escapeHtml(post.content)}</div>`;
+    postBody.innerHTML = `<div class="post-text">${escapeHtml(post.content)}</div>`;
 
     const repliesDiv = document.createElement('div');
-    repliesDiv.className = 'post-replies';
+    repliesDiv.className = 'comments-section';
     
     if (post.replies && post.replies.length > 0) {
         post.replies.forEach(reply => {
@@ -123,52 +146,149 @@ function createPostElement(post) {
     }
 
     const replyForm = document.createElement('div');
-    replyForm.className = 'reply-form';
+    replyForm.className = 'comment-form';
     replyForm.innerHTML = `
-        <input type="text" class="reply-author" placeholder="Name (optional)" data-post-id="${post.id}">
-        <textarea class="reply-content" placeholder="Write a reply..." data-post-id="${post.id}"></textarea>
-        <button class="reply-btn" data-post-id="${post.id}">Post Reply</button>
+        <div class="form-group">
+            <input type="text" class="reply-author" placeholder="name (optional)" data-post-id="${post.id}">
+            <textarea class="reply-content" placeholder="what are your thoughts?" data-post-id="${post.id}"></textarea>
+            <button class="reply-btn" data-post-id="${post.id}">save</button>
+        </div>
     `;
 
-    postDiv.appendChild(postHeader);
-    postDiv.appendChild(postBody);
-    postDiv.appendChild(repliesDiv);
-    postDiv.appendChild(replyForm);
+    postContent.appendChild(postHeader);
+    postContent.appendChild(postMeta);
+    postContent.appendChild(postBody);
+    postContent.appendChild(repliesDiv);
+    postContent.appendChild(replyForm);
 
-    // Setup reply button
+    postDiv.appendChild(postVote);
+    postDiv.appendChild(postContent);
+
+    // Setup event listeners
     replyForm.querySelector('.reply-btn').addEventListener('click', () => {
         handleCreateReply(post.id);
     });
 
-    // Setup delete post button
-    postHeader.querySelector('.delete-post').addEventListener('click', () => {
+    postHeader.querySelector('.post-title').addEventListener('click', () => {
+        toggleComments(postDiv);
+    });
+
+    postMeta.querySelector('.delete-post').addEventListener('click', () => {
         deletePost(post.id);
+    });
+
+    postVote.querySelector('.vote-up').addEventListener('click', () => {
+        votePost(post.id, 1);
+    });
+
+    postVote.querySelector('.vote-down').addEventListener('click', () => {
+        votePost(post.id, -1);
     });
 
     return postDiv;
 }
 
-function createReplyElement(reply, postId) {
+function createReplyElement(reply, postId, depth = 0) {
     const replyDiv = document.createElement('div');
-    replyDiv.className = 'forum-reply';
-    replyDiv.innerHTML = `
-        <div class="reply-header">
-            <span class="reply-author">${reply.author}</span>
-            <span class="reply-meta">${reply.date} ${reply.time}</span>
-            <span class="delete-reply" data-post-id="${postId}" data-reply-id="${reply.id}" title="Delete">×</span>
-        </div>
-        <div class="reply-content">${escapeHtml(reply.content)}</div>
+    replyDiv.className = 'comment';
+    replyDiv.style.marginLeft = (depth * 30) + 'px';
+
+    const commentVote = document.createElement('div');
+    commentVote.className = 'comment-vote';
+    commentVote.innerHTML = `
+        <button class="vote-comment-up" title="Upvote">▲</button>
+        <span class="score">${reply.score || 0}</span>
+        <button class="vote-comment-down" title="Downvote">▼</button>
     `;
+
+    const commentContent = document.createElement('div');
+    commentContent.className = 'comment-content';
+
+    const commentHeader = document.createElement('div');
+    commentHeader.className = 'comment-header';
+    commentHeader.innerHTML = `
+        <span class="author">${reply.author}</span> 
+        <span class="timestamp">${reply.date} ${reply.time}</span>
+        <span class="comment-actions">
+            <span class="delete-reply" data-post-id="${postId}" data-reply-id="${reply.id}" title="Delete">delete</span>
+        </span>
+    `;
+
+    const commentBody = document.createElement('div');
+    commentBody.className = 'comment-text';
+    commentBody.innerHTML = escapeHtml(reply.content);
+
+    const commentMeta = document.createElement('div');
+    commentMeta.className = 'comment-meta';
+    commentMeta.innerHTML = `<span class="reply-action" data-post-id="${postId}" data-reply-id="${reply.id}">reply</span>`;
+
+    commentContent.appendChild(commentHeader);
+    commentContent.appendChild(commentBody);
+    commentContent.appendChild(commentMeta);
+
+    replyDiv.appendChild(commentVote);
+    replyDiv.appendChild(commentContent);
+
+    // Event listeners
+    commentMeta.querySelector('.reply-action').addEventListener('click', () => {
+        toggleReplyForm(replyDiv, postId, reply.id);
+    });
 
     replyDiv.querySelector('.delete-reply').addEventListener('click', () => {
         deleteReply(postId, reply.id);
     });
 
+    // Nested replies
+    if (reply.nested_replies && reply.nested_replies.length > 0) {
+        reply.nested_replies.forEach(nestedReply => {
+            const nestedElement = createReplyElement(nestedReply, postId, depth + 1);
+            replyDiv.appendChild(nestedElement);
+        });
+    }
+
     return replyDiv;
 }
 
+function toggleComments(postElement) {
+    const commentsSection = postElement.querySelector('.comments-section');
+    const commentForm = postElement.querySelector('.comment-form');
+    
+    if (commentsSection.style.display === 'none') {
+        commentsSection.style.display = 'block';
+        commentForm.style.display = 'block';
+    } else {
+        commentsSection.style.display = 'none';
+        commentForm.style.display = 'none';
+    }
+}
+
+function toggleReplyForm(replyElement, postId, replyId) {
+    let form = replyElement.querySelector('.nested-reply-form');
+    
+    if (form) {
+        form.remove();
+    } else {
+        const formDiv = document.createElement('div');
+        formDiv.className = 'nested-reply-form';
+        formDiv.innerHTML = `
+            <input type="text" class="reply-author" placeholder="name (optional)" data-post-id="${postId}" data-reply-id="${replyId}">
+            <textarea class="reply-content" placeholder="what are your thoughts?" data-post-id="${postId}" data-reply-id="${replyId}"></textarea>
+            <button class="reply-btn nested" data-post-id="${postId}" data-reply-id="${replyId}">save</button>
+        `;
+        
+        formDiv.querySelector('.reply-btn').addEventListener('click', () => {
+            handleCreateNestedReply(postId, replyId);
+        });
+        
+        replyElement.appendChild(formDiv);
+        formDiv.querySelector('.reply-author').focus();
+    }
+}
+
 function handleCreateReply(postId) {
-    const form = document.querySelector(`.reply-form[data-post-id="${postId}"]`);
+    const form = document.querySelector(`.comment-form[data-post-id="${postId}"]`);
+    if (!form) return;
+    
     const authorInput = form.querySelector('.reply-author');
     const contentInput = form.querySelector('.reply-content');
 
@@ -176,7 +296,7 @@ function handleCreateReply(postId) {
     const content = contentInput.value.trim();
 
     if (!content) {
-        alert('Please write a reply.');
+        alert('Please write a comment.');
         return;
     }
 
@@ -192,7 +312,9 @@ function handleCreateReply(postId) {
             author: author,
             content: content,
             date: new Date().toLocaleDateString('en-US'),
-            time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
+            time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
+            score: 0,
+            nested_replies: []
         };
 
         post.replies.push(reply);
@@ -207,6 +329,62 @@ function handleCreateReply(postId) {
     }
 }
 
+function handleCreateNestedReply(postId, replyId) {
+    let posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
+    const post = posts.find(p => p.id === postId);
+
+    if (!post) return;
+
+    const reply = post.replies.find(r => r.id === replyId);
+    if (!reply) return;
+
+    // Find the nested form
+    const postElement = document.querySelector(`[data-post-id="${postId}"]`);
+    const replyElement = postElement.querySelector(`[data-reply-id="${replyId}"]`);
+    
+    if (!replyElement) return;
+
+    const form = replyElement.querySelector('.nested-reply-form');
+    const authorInput = form.querySelector('.reply-author');
+    const contentInput = form.querySelector('.reply-content');
+
+    const author = authorInput.value.trim() || 'Anonymous';
+    const content = contentInput.value.trim();
+
+    if (!content) {
+        alert('Please write a comment.');
+        return;
+    }
+
+    if (!reply.nested_replies) reply.nested_replies = [];
+
+    const nestedReply = {
+        id: Date.now(),
+        author: author,
+        content: content,
+        date: new Date().toLocaleDateString('en-US'),
+        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
+        score: 0,
+        nested_replies: []
+    };
+
+    reply.nested_replies.push(nestedReply);
+    localStorage.setItem('forumPosts', JSON.stringify(posts));
+
+    loadPosts();
+}
+
+function votePost(postId, direction) {
+    let posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
+    const post = posts.find(p => p.id === postId);
+    
+    if (post) {
+        post.score += direction;
+        localStorage.setItem('forumPosts', JSON.stringify(posts));
+        loadPosts();
+    }
+}
+
 function deletePost(postId) {
     if (confirm('Delete this thread?')) {
         let posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
@@ -217,7 +395,7 @@ function deletePost(postId) {
 }
 
 function deleteReply(postId, replyId) {
-    if (confirm('Delete this reply?')) {
+    if (confirm('Delete this comment?')) {
         let posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
         const post = posts.find(p => p.id === postId);
         
