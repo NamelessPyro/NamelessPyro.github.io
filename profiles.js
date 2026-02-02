@@ -14,9 +14,18 @@ const profilesList = document.getElementById('profilesList');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    syncProfileData();
     loadProfiles();
     displayCurrentUser();
     setupEventListeners();
+});
+
+// Listen for storage changes (other tabs/windows)
+window.addEventListener('storage', (e) => {
+    if (e.key === PROFILES_STORAGE_KEY || e.key === CURRENT_USER_KEY) {
+        loadProfiles();
+        displayCurrentUser();
+    }
 });
 
 function setupEventListeners() {
@@ -39,10 +48,26 @@ function handleCreateProfile() {
         return;
     }
 
+    if (username.length < 3) {
+        alert('Username must be at least 3 characters long.');
+        return;
+    }
+
+    if (username.length > 20) {
+        alert('Username cannot exceed 20 characters.');
+        return;
+    }
+
     // Check if username already exists
     const profiles = JSON.parse(localStorage.getItem(PROFILES_STORAGE_KEY)) || {};
-    if (profiles[username.toLowerCase()]) {
-        alert('Username already taken. Please choose another.');
+    const userKeyLower = username.toLowerCase();
+    
+    if (profiles[userKeyLower]) {
+        // Username exists - attempt login
+        loginToProfile(profiles[userKeyLower]);
+        usernameInput.value = '';
+        userBioInput.value = '';
+        userColorInputs[0].checked = true;
         return;
     }
 
@@ -58,7 +83,7 @@ function handleCreateProfile() {
     };
 
     // Save profile
-    profiles[username.toLowerCase()] = profile;
+    profiles[userKeyLower] = profile;
     localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify(profiles));
 
     // Set as current user
@@ -83,15 +108,24 @@ function handleLogout() {
     alert('Logged out successfully!');
 }
 
+function loginToProfile(profile) {
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(profile));
+    displayCurrentUser();
+    loadProfiles();
+    alert(`Logged in as ${profile.username}!`);
+}
+
 function displayCurrentUser() {
     const currentUser = JSON.parse(localStorage.getItem(CURRENT_USER_KEY));
     
     if (currentUser) {
         currentUserDisplay.innerHTML = `
             <div class="user-info">
-                <div class="user-name" style="color: ${currentUser.color};">${currentUser.username}</div>
+                <div class="user-name" style="color: ${currentUser.color};">► ${currentUser.username}</div>
+                <div class="user-detail">Status: ACTIVE</div>
                 <div class="user-detail">Verification: ${currentUser.verified}</div>
                 <div class="user-detail">Posts: ${currentUser.postCount || 0}</div>
+                <div class="user-detail">Bio: ${escapeHtml(currentUser.bio)}</div>
                 <div class="user-detail">Joined: ${currentUser.joinDate}</div>
             </div>
         `;
@@ -116,6 +150,7 @@ function loadProfiles() {
     profileArray.forEach(profile => {
         const profileItem = document.createElement('div');
         profileItem.className = 'profile-item';
+        profileItem.style.cursor = 'pointer';
         profileItem.innerHTML = `
             <div class="profile-header">
                 <span class="profile-username" style="color: ${profile.color};">${profile.username}</span>
@@ -124,8 +159,10 @@ function loadProfiles() {
             <div class="profile-details">
                 <span class="profile-bio">${escapeHtml(profile.bio)}</span>
                 <span class="profile-joined">Joined: ${profile.joinDate} | Posts: ${profile.postCount || 0}</span>
+                <span class="profile-action-hint" style="color: var(--text-dim); font-size: 0.75rem; margin-top: 4px;">Click to login</span>
             </div>
         `;
+        profileItem.addEventListener('click', () => loginToProfile(profile));
         profilesList.appendChild(profileItem);
     });
 }
@@ -147,6 +184,13 @@ function escapeHtml(text) {
     return text.replace(/[&<>"']/g, m => map[m]);
 }
 
+function syncProfileData() {
+    // Ensure profiles storage exists
+    if (!localStorage.getItem(PROFILES_STORAGE_KEY)) {
+        localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify({}));
+    }
+}
+
 // Export function for forum.js to use
 window.getCurrentUser = function() {
     return JSON.parse(localStorage.getItem(CURRENT_USER_KEY)) || null;
@@ -155,6 +199,7 @@ window.getCurrentUser = function() {
 window.incrementPostCount = function(username) {
     const profiles = JSON.parse(localStorage.getItem(PROFILES_STORAGE_KEY)) || {};
     const userKey = username.toLowerCase();
+    
     if (profiles[userKey]) {
         profiles[userKey].postCount = (profiles[userKey].postCount || 0) + 1;
         localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify(profiles));
@@ -164,6 +209,16 @@ window.incrementPostCount = function(username) {
         if (currentUser && currentUser.username.toLowerCase() === userKey) {
             currentUser.postCount = profiles[userKey].postCount;
             localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+            
+            // Trigger UI update
+            if (document.getElementById('currentUser')) {
+                displayCurrentUser();
+            }
+        }
+        
+        // Trigger profiles list update
+        if (document.getElementById('profilesList')) {
+            loadProfiles();
         }
     }
 };
