@@ -8,7 +8,11 @@ const forumContainer = document.getElementById('forumContainer');
 const postPasswordInput = document.getElementById('postPassword');
 const postTitleInput = document.getElementById('postTitle');
 const postContentInput = document.getElementById('postContent');
+const postMediaInput = document.getElementById('postMedia');
+const mediaPreview = document.getElementById('mediaPreview');
 const submitPostBtn = document.getElementById('submitPost');
+
+let selectedMediaFile = null;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -18,6 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function setupEventListeners() {
     submitPostBtn.addEventListener('click', handleCreatePost);
+    
+    // Media file selection
+    postMediaInput.addEventListener('change', handleMediaSelect);
     
     // Allow Enter+Ctrl to submit (terminal style)
     postContentInput.addEventListener('keydown', (e) => {
@@ -61,6 +68,7 @@ function handleCreatePost() {
         date: new Date().toLocaleDateString('en-US'),
         time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
         score: 1,
+        media: selectedMediaFile,
         replies: []
     };
 
@@ -73,6 +81,9 @@ function handleCreatePost() {
     postPasswordInput.value = '';
     postTitleInput.value = '';
     postContentInput.value = '';
+    postMediaInput.value = '';
+    mediaPreview.innerHTML = '';
+    selectedMediaFile = null;
 
     // Reload posts
     loadPosts();
@@ -134,6 +145,27 @@ function createPostElement(post) {
     const postBody = document.createElement('div');
     postBody.className = 'post-body';
     postBody.innerHTML = `<div class="post-text">${escapeHtml(post.content)}</div>`;
+
+    // Add media if present
+    if (post.media) {
+        const mediaContainer = document.createElement('div');
+        mediaContainer.className = 'post-media';
+        
+        if (post.media.type.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.src = post.media.data;
+            img.className = 'post-image';
+            mediaContainer.appendChild(img);
+        } else if (post.media.type.startsWith('video/')) {
+            const video = document.createElement('video');
+            video.src = post.media.data;
+            video.className = 'post-video';
+            video.controls = true;
+            mediaContainer.appendChild(video);
+        }
+        
+        postBody.appendChild(mediaContainer);
+    }
 
     const repliesDiv = document.createElement('div');
     repliesDiv.className = 'comments-section';
@@ -416,4 +448,48 @@ function escapeHtml(text) {
         "'": '&#039;'
     };
     return text.replace(/[&<>"']/g, m => map[m]);
+}
+
+function handleMediaSelect(e) {
+    const file = e.target.files[0];
+    if (!file) {
+        selectedMediaFile = null;
+        mediaPreview.innerHTML = '';
+        return;
+    }
+
+    // Check file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+        alert('File size exceeds 5MB limit.');
+        postMediaInput.value = '';
+        selectedMediaFile = null;
+        mediaPreview.innerHTML = '';
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        selectedMediaFile = {
+            data: event.target.result,
+            type: file.type,
+            name: file.name
+        };
+
+        // Show preview
+        mediaPreview.innerHTML = '';
+        if (file.type.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.src = event.target.result;
+            img.className = 'media-preview-img';
+            mediaPreview.appendChild(img);
+        } else if (file.type.startsWith('video/')) {
+            const video = document.createElement('video');
+            video.src = event.target.result;
+            video.className = 'media-preview-video';
+            video.controls = true;
+            mediaPreview.appendChild(video);
+        }
+    };
+    reader.readAsDataURL(file);
 }
