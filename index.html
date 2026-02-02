@@ -7,65 +7,63 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Source+Code+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Terminal Window -->
     <div class="terminal">
         <div class="terminal-header">
-            <span class="terminal-title">sys_data.exe</span>
+            <span class="terminal-title">C:\Users\NamelessPyro\Desktop></span>
         </div>
         <div class="terminal-content">
-            <div class="data-grid">
-                <!-- Left Column -->
-                <div class="data-column">
-                    <div class="data-section">
-                        <div class="section-label">>> USER_INFO</div>
-                        <div class="data-line"><span class="label">NAME:</span> <span class="value">NamelessPyro</span></div>
-                        <div class="data-line"><span class="label">STATUS:</span> <span class="value active">ONLINE</span></div>
-                        <div class="data-line"><span class="label">TYPE:</span> <span class="value">Developer</span></div>
-                    </div>
-
-                    <div class="data-section">
-                        <div class="section-label">>> PROFILE</div>
-                        <div class="data-line"><span class="label">DESC:</span> I am just a guy</div>
-                        <div class="data-line"><span class="label">WHO:</span> figures it out</div>
-                        <div class="data-line"><span class="label">WHEN:</span> sometimes</div>
-                    </div>
-                </div>
-
-                <!-- Right Column -->
-                <div class="data-column">
-                    <div class="data-section">
-                        <div class="section-label">>> NETWORKS</div>
-                        <div class="data-line"><span class="label">YOUTUBE:</span> <a href="https://www.youtube.com/@NamelessPyro" target="_blank" class="link">@NamelessPyro</a></div>
-                        <div class="data-line"><span class="label">GITHUB:</span> <a href="https://github.com/NamelessPyro" target="_blank" class="link">NamelessPyro</a></div>
-                        <div class="data-line"><span class="label">DISCORD:</span> <a href="https://discord.gg/WGzAb7QY2H" target="_blank" class="link">Server</a></div>
-                    </div>
-
-                    <div class="data-section">
-                        <div class="section-label">>> SKILLS</div>
-                        <div class="data-line"><span class="label">GAME_DEV:</span> <span class="value">TRUE</span></div>
-                        <div class="data-line"><span class="label">CODING:</span> <span class="value">TRUE</span></div>
-                        <div class="data-line"><span class="label">ART:</span> <span class="value">TRUE</span></div>
-                    </div>
-                </div>
+            <div class="command-line">
+                <span class="prompt">C:\Users\NamelessPyro\Desktop></span> <span class="command">python profile.exe</span>
             </div>
 
-            <!-- Status bar -->
-            <div class="status-bar">
-                <span class="status-item">SYS_ONLINE</span>
-                <span class="status-separator">|</span>
-                <span class="status-item">CONNECTED</span>
-                <span class="status-separator">|</span>
-                <span class="status-item">READY</span>
+            <div class="output-section">
+                <div class="output-line">Loading user profile...</div>
+                <div class="output-line"></div>
+                <div class="output-line"><span class="label">NAME</span>.............. NamelessPyro</div>
+                <div class="output-line"><span class="label">STATUS</span>............ ONLINE</div>
+                <div class="output-line"><span class="label">TYPE</span>.............. Developer</div>
+                <div class="output-line"></div>
+                <div class="output-line"><span class="label">BIO</span>............... I am just a guy who figures it out sometimes.</div>
+                <div class="output-line"></div>
+            </div>
+
+            <div class="command-line">
+                <span class="prompt">C:\Users\NamelessPyro\Desktop></span> <span class="command">dir /links</span>
+            </div>
+
+            <div class="output-section">
+                <div class="output-line">Directory of C:\links\</div>
+                <div class="output-line"></div>
+                <div class="dir-line">
+                    <span class="dir-item">[YOUTUBE]</span>
+                    <span class="dir-link"><a href="https://www.youtube.com/@NamelessPyro" target="_blank">https://www.youtube.com/@NamelessPyro</a></span>
+                </div>
+                <div class="dir-line">
+                    <span class="dir-item">[GITHUB]</span>
+                    <span class="dir-link"><a href="https://github.com/NamelessPyro" target="_blank">https://github.com/NamelessPyro</a></span>
+                </div>
+                <div class="dir-line">
+                    <span class="dir-item">[DISCORD]</span>
+                    <span class="dir-link"><a href="https://discord.gg/WGzAb7QY2H" target="_blank">https://discord.gg/WGzAb7QY2H</a></span>
+                </div>
+                <div class="output-line"></div>
+                <div class="output-line">3 Link(s) found</div>
+                <div class="output-line"></div>
+            </div>
+
+            <div class="command-line cursor">
+                <span class="prompt">C:\Users\NamelessPyro\Desktop></span> <span class="input">_</span>
             </div>
         </div>
     </div>
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 NamelessPyro | sys_v1.0</p>
+            <p>&copy; 2026 NamelessPyro | v1.0</p>
         </div>
     </footer>
 

@@ -8,14 +8,12 @@
 :root {
     --primary-color: #00ff00;
     --secondary-color: #00dd00;
-    --accent-color: #00aa00;
     --bg-dark: #000000;
-    --terminal-bg: #001100;
+    --terminal-bg: #000000;
     --text-color: #00ff00;
     --text-dim: #007700;
     --white: #ffffff;
-    --border-color: #004400;
-    --alert: #ff0000;
+    --border-color: #007700;
 }
 
 html {
@@ -23,7 +21,7 @@ html {
 }
 
 body {
-    font-family: 'JetBrains Mono', 'Source Code Pro', monospace;
+    font-family: 'Courier Prime', monospace;
     line-height: 1.4;
     color: var(--text-color);
     background-color: var(--bg-dark);
@@ -38,7 +36,7 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 0 20px;
 }
@@ -47,141 +45,127 @@ body {
 .terminal {
     max-width: 1100px;
     margin: 30px auto;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--text-color);
     border-radius: 0;
     overflow: hidden;
-    box-shadow: 0 0 40px rgba(0, 255, 0, 0.3), inset 0 0 20px rgba(0, 255, 0, 0.05);
     background-color: var(--terminal-bg);
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
 }
 
 .terminal-header {
-    background: #001100;
-    border-bottom: 1px solid var(--border-color);
-    padding: 8px 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    position: relative;
-}
-
-.terminal-header::before {
-    content: '●●●';
-    color: #004400;
+    background: var(--text-color);
+    color: var(--bg-dark);
+    padding: 2px 4px;
+    font-size: 0.85rem;
     font-weight: bold;
-    letter-spacing: 4px;
-    font-size: 0.8rem;
+    letter-spacing: 1px;
 }
 
 .terminal-title {
-    color: var(--text-color);
+    color: var(--bg-dark);
     font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 2px;
-    margin-left: 30px;
+    font-weight: bold;
 }
 
 .terminal-content {
-    padding: 20px;
-    min-height: 500px;
+    padding: 10px 8px;
+    min-height: 550px;
     color: var(--text-color);
     font-size: 0.9rem;
     line-height: 1.5;
-    background-image: 
-        repeating-linear-gradient(
-            0deg,
-            rgba(0, 255, 0, 0.03),
-            rgba(0, 255, 0, 0.03) 1px,
-            transparent 1px,
-            transparent 2px
-        );
+    font-family: 'Courier Prime', monospace;
+    letter-spacing: 0px;
 }
 
-/* Data Grid */
-.data-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-    margin-bottom: 20px;
-}
-
-.data-column {
+/* Command Line */
+.command-line {
     display: flex;
-    flex-direction: column;
-    gap: 15px;
+    gap: 0;
+    margin: 5px 0;
+    align-items: flex-start;
+    animation: fadeInUp 0.6s ease-out;
 }
 
-.data-section {
-    border: 1px solid var(--border-color);
-    padding: 10px;
-    background-color: rgba(0, 20, 0, 0.5);
+.prompt {
+    color: var(--text-color);
+    font-weight: bold;
+    flex-shrink: 0;
 }
 
-.section-label {
-    color: var(--secondary-color);
-    font-weight: 700;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 0.85rem;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 4px;
-}
-
-.data-line {
-    display: flex;
-    gap: 12px;
-    margin: 4px 0;
-    font-size: 0.9rem;
-}
-
-.label {
-    color: var(--secondary-color);
-    font-weight: 600;
-    min-width: 80px;
-}
-
-.value {
+.command {
     color: var(--text-color);
 }
 
-.value.active {
-    color: var(--primary-color);
-    font-weight: 700;
-    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+.input {
+    animation: blink 1s infinite;
 }
 
-.link {
-    color: var(--primary-color);
+.cursor .input {
+    animation: blink 1s infinite;
+}
+
+/* Output Section */
+.output-section {
+    margin: 0 0 5px 0;
+    animation: fadeInUp 0.6s ease-out 0.1s backwards;
+}
+
+.output-line {
+    color: var(--text-color);
+    margin: 0;
+    line-height: 1.4;
+    animation: fadeInUp 0.3s ease-out;
+}
+
+.label {
+    color: var(--text-color);
+    font-weight: bold;
+}
+
+.dir-line {
+    display: flex;
+    gap: 15px;
+    margin: 2px 0;
+    align-items: center;
+}
+
+.dir-item {
+    color: var(--secondary-color);
+    font-weight: bold;
+    min-width: 100px;
+}
+
+.dir-link a {
+    color: var(--text-color);
     text-decoration: none;
     border-bottom: 1px dotted var(--border-color);
     transition: all 0.2s ease;
-    cursor: pointer;
 }
 
-.link:hover {
-    color: var(--primary-color);
+.dir-link a:hover {
+    color: var(--text-color);
     text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
-    border-bottom-color: var(--primary-color);
+    border-bottom-color: var(--text-color);
 }
 
-/* Status Bar */
-.status-bar {
-    border-top: 1px solid var(--border-color);
-    padding: 10px;
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    font-size: 0.85rem;
-    color: var(--accent-color);
-    background-color: rgba(0, 20, 0, 0.3);
+@keyframes blink {
+    0%, 49% {
+        opacity: 1;
+    }
+    50%, 100% {
+        opacity: 0;
+    }
 }
 
-.status-item {
-    letter-spacing: 1px;
-}
-
-.status-separator {
-    color: var(--border-color);
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Footer */
@@ -192,73 +176,58 @@ body {
     padding: 2rem;
     border-top: 1px solid var(--border-color);
     font-size: 0.8rem;
-    letter-spacing: 1px;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    letter-spacing: 0.5px;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .data-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-
     .terminal {
         margin: 20px;
     }
 
     .terminal-content {
-        padding: 15px;
+        padding: 8px;
         min-height: 400px;
         font-size: 0.8rem;
     }
 
-    .data-line {
+    .command-line {
         font-size: 0.8rem;
     }
 
-    .label {
-        min-width: 60px;
+    .dir-line {
+        gap: 10px;
     }
 }
 
 @media (max-width: 480px) {
     .terminal {
         margin: 10px;
-        border-radius: 0;
+        border: 1px solid var(--text-color);
     }
 
     .terminal-content {
-        padding: 10px;
+        padding: 6px;
         min-height: 300px;
         font-size: 0.7rem;
         line-height: 1.4;
     }
 
-    .data-grid {
-        gap: 10px;
-    }
-
-    .data-section {
-        padding: 8px;
-    }
-
-    .label {
-        min-width: 50px;
-    }
-
-    .status-bar {
+    .terminal-header {
         font-size: 0.7rem;
+    }
+
+    .command-line {
+        font-size: 0.7rem;
+    }
+
+    .dir-line {
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .dir-item {
+        min-width: 80px;
     }
 }
 

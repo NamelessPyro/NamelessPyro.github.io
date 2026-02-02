@@ -1,18 +1,16 @@
-// Data reveal animation on page load
+// Terminal command animation
 document.addEventListener('DOMContentLoaded', function() {
-    const dataLines = document.querySelectorAll('.data-line');
-    const dataSections = document.querySelectorAll('.data-section');
+    const commandLines = document.querySelectorAll('.command-line');
+    const outputSections = document.querySelectorAll('.output-section');
     
-    // Stagger animation for sections
-    dataSections.forEach((section, index) => {
-        section.style.opacity = '0';
-        section.style.animation = `fadeInUp 0.6s ease-out ${index * 0.1}s forwards`;
+    // Stagger animations for command lines
+    commandLines.forEach((line, index) => {
+        line.style.animationDelay = `${index * 0.15}s`;
     });
 
-    // Stagger animation for data lines
-    dataLines.forEach((line, index) => {
-        line.style.opacity = '0';
-        line.style.animation = `fadeInUp 0.4s ease-out ${0.3 + index * 0.05}s forwards`;
+    // Stagger animations for output sections
+    outputSections.forEach((section, index) => {
+        section.style.animationDelay = `${0.1 + index * 0.2}s`;
     });
 });
 
@@ -29,6 +27,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
 
 
 
