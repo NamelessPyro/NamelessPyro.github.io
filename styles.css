@@ -809,6 +809,183 @@ body {
     }
 }
 
+/* Profiles Page Styles */
+.profiles-container {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.profile-section {
+    margin-bottom: 10px;
+}
+
+.profile-title {
+    color: var(--primary-color);
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.current-user-display {
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    background-color: rgba(255, 51, 51, 0.05);
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.user-name {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.user-detail {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+}
+
+.user-status {
+    color: var(--text-dim);
+    font-style: italic;
+}
+
+.user-actions {
+    margin-top: 8px;
+}
+
+.action-btn {
+    background-color: var(--bg-dark);
+    border: 1px solid var(--text-color);
+    color: var(--text-color);
+    padding: 6px 12px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+    background-color: rgba(255, 51, 51, 0.1);
+    text-shadow: 0 0 10px rgba(255, 51, 51, 0.8);
+}
+
+.profile-form {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.color-picker {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.color-picker input[type="radio"] {
+    display: none;
+}
+
+.color-option {
+    width: 30px;
+    height: 30px;
+    border: 2px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+.color-picker input[type="radio"]:checked + .color-option {
+    border-color: var(--white);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5), inset 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.color-option:hover {
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+.profiles-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+.profile-item {
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+    animation: fadeInUp 0.3s ease-out;
+}
+
+.profile-header {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.profile-username {
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+.profile-verified {
+    color: var(--primary-color);
+    font-size: 0.8rem;
+    background-color: rgba(255, 51, 51, 0.1);
+    padding: 2px 6px;
+    border: 1px solid var(--border-color);
+}
+
+.profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.85rem;
+}
+
+.profile-bio {
+    color: var(--text-color);
+    font-style: italic;
+}
+
+.profile-joined {
+    color: var(--text-dim);
+    font-size: 0.8rem;
+}
+
+.verified-badge {
+    color: var(--primary-color);
+    font-weight: bold;
+    margin-left: 5px;
+    font-size: 0.85rem;
+}
+
+.login-prompt {
+    color: var(--text-dim);
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.login-prompt a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.login-prompt a:hover {
+    text-decoration: underline;
+    text-shadow: 0 0 10px rgba(255, 51, 51, 0.8);
+}
+
 /* Media Styles */
 .media-input {
     display: block;

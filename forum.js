@@ -47,12 +47,21 @@ function handleCreatePost() {
         return;
     }
 
+    // Check if user is logged in
+    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+    if (!currentUser) {
+        alert('Please create or login to a profile before posting. Go to Profiles page.');
+        return;
+    }
+
     // Create post object
     const post = {
         id: Date.now(),
         title: title,
         content: content,
-        author: 'NamelessPyro',
+        author: currentUser.username,
+        authorColor: currentUser.color,
+        authorVerified: currentUser.verified,
         date: new Date().toLocaleDateString('en-US'),
         time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
         score: 1,
@@ -64,6 +73,11 @@ function handleCreatePost() {
     let posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
     posts.unshift(post);
     localStorage.setItem('forumPosts', JSON.stringify(posts));
+
+    // Increment post count
+    if (window.incrementPostCount) {
+        window.incrementPostCount(currentUser.username);
+    }
 
     // Clear inputs
     postTitleInput.value = '';
@@ -119,7 +133,8 @@ function createPostElement(post) {
     const postMeta = document.createElement('div');
     postMeta.className = 'post-meta';
     postMeta.innerHTML = `
-        submitted by <span class="author">${post.author}</span> 
+        submitted by <span class="author" style="color: ${post.authorColor || 'var(--text-color)'};">${post.author}</span>
+        <span class="verified-badge">✓ ${post.authorVerified}</span>
         to <span class="subreddit">/forum</span> 
         on ${post.date} at ${post.time}
         <span class="post-actions">
@@ -166,13 +181,22 @@ function createPostElement(post) {
 
     const replyForm = document.createElement('div');
     replyForm.className = 'comment-form';
-    replyForm.innerHTML = `
-        <div class="form-group">
-            <input type="text" class="reply-author" placeholder="name (optional)" data-post-id="${post.id}">
-            <textarea class="reply-content" placeholder="what are your thoughts?" data-post-id="${post.id}"></textarea>
-            <button class="reply-btn" data-post-id="${post.id}">save</button>
-        </div>
-    `;
+    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+    
+    if (currentUser) {
+        replyForm.innerHTML = `
+            <div class="form-group">
+                <textarea class="reply-content" placeholder="what are your thoughts?" data-post-id="${post.id}"></textarea>
+                <button class="reply-btn" data-post-id="${post.id}">save</button>
+            </div>
+        `;
+    } else {
+        replyForm.innerHTML = `
+            <div class="form-group">
+                <div class="login-prompt">Must be logged in to reply. <a href="profiles.html">Create/Login Profile</a></div>
+            </div>
+        `;
+    }
 
     postContent.appendChild(postHeader);
     postContent.appendChild(postMeta);
@@ -226,7 +250,8 @@ function createReplyElement(reply, postId, depth = 0) {
     const commentHeader = document.createElement('div');
     commentHeader.className = 'comment-header';
     commentHeader.innerHTML = `
-        <span class="author">${reply.author}</span> 
+        <span class="author" style="color: ${reply.authorColor || 'var(--text-color)'};">${reply.author}</span>
+        <span class="verified-badge">✓ ${reply.authorVerified || ''}</span>
         <span class="timestamp">${reply.date} ${reply.time}</span>
         <span class="comment-actions">
             <span class="delete-reply" data-post-id="${postId}" data-reply-id="${reply.id}" title="Delete">delete</span>
@@ -308,14 +333,18 @@ function handleCreateReply(postId) {
     const form = document.querySelector(`.comment-form[data-post-id="${postId}"]`);
     if (!form) return;
     
-    const authorInput = form.querySelector('.reply-author');
     const contentInput = form.querySelector('.reply-content');
-
-    const author = authorInput.value.trim() || 'Anonymous';
     const content = contentInput.value.trim();
 
     if (!content) {
         alert('Please write a comment.');
+        return;
+    }
+
+    // Check if user is logged in
+    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+    if (!currentUser) {
+        alert('Please create or login to a profile to reply.');
         return;
     }
 
@@ -328,7 +357,9 @@ function handleCreateReply(postId) {
 
         const reply = {
             id: Date.now(),
-            author: author,
+            author: currentUser.username,
+            authorColor: currentUser.color,
+            authorVerified: currentUser.verified,
             content: content,
             date: new Date().toLocaleDateString('en-US'),
             time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
@@ -339,8 +370,12 @@ function handleCreateReply(postId) {
         post.replies.push(reply);
         localStorage.setItem('forumPosts', JSON.stringify(posts));
 
+        // Increment post count
+        if (window.incrementPostCount) {
+            window.incrementPostCount(currentUser.username);
+        }
+
         // Clear inputs
-        authorInput.value = '';
         contentInput.value = '';
 
         // Reload posts

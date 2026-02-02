@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NamelessPyro - Profiles</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Terminal Window -->
+    <div class="terminal">
+        <div class="terminal-header">
+            <span class="terminal-title">C:\Users\NamelessPyro\Profiles></span>
+        </div>
+        <div class="terminal-content">
+            <div class="command-line">
+                <span class="prompt">C:\Users\NamelessPyro\Profiles></span> <span class="command">load /accounts</span>
+            </div>
+
+            <div class="output-section">
+                <div class="output-line">User Profiles System</div>
+                <div class="output-line"></div>
+                
+                <div class="profiles-container">
+                    <div class="profile-section">
+                        <div class="profile-title">Current User</div>
+                        <div id="currentUser" class="current-user-display">
+                            <span class="user-status">Not logged in</span>
+                        </div>
+                        <div id="userActions" class="user-actions" style="display: none;">
+                            <button id="logoutBtn" class="action-btn">LOGOUT</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="output-line"></div>
+            </div>
+
+            <div class="command-line">
+                <span class="prompt">C:\Users\NamelessPyro\Profiles></span> <span class="command">register /new</span>
+            </div>
+
+            <div class="output-section">
+                <div class="output-line">Create or Login to Profile</div>
+                <div class="output-line"></div>
+                
+                <div class="profile-form">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" placeholder="Your username" class="form-input" maxlength="20">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userBio">Bio (optional):</label>
+                        <textarea id="userBio" placeholder="Tell us about yourself..." class="form-textarea" maxlength="150"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userColor">Profile Color:</label>
+                        <div class="color-picker">
+                            <input type="radio" name="userColor" value="#ff3333" id="color-red" checked>
+                            <label for="color-red" class="color-option" style="background-color: #ff3333;"></label>
+                            
+                            <input type="radio" name="userColor" value="#00ff00" id="color-green">
+                            <label for="color-green" class="color-option" style="background-color: #00ff00;"></label>
+                            
+                            <input type="radio" name="userColor" value="#ffff00" id="color-yellow">
+                            <label for="color-yellow" class="color-option" style="background-color: #ffff00;"></label>
+                            
+                            <input type="radio" name="userColor" value="#00ffff" id="color-cyan">
+                            <label for="color-cyan" class="color-option" style="background-color: #00ffff;"></label>
+                            
+                            <input type="radio" name="userColor" value="#ff00ff" id="color-magenta">
+                            <label for="color-magenta" class="color-option" style="background-color: #ff00ff;"></label>
+                        </div>
+                    </div>
+
+                    <button id="createProfileBtn" class="submit-btn">PROFILE /create</button>
+                </div>
+                
+                <div class="output-line"></div>
+            </div>
+
+            <div class="command-line">
+                <span class="prompt">C:\Users\NamelessPyro\Profiles></span> <span class="command">dir /all</span>
+            </div>
+
+            <div class="output-section">
+                <div class="output-line">Registered Profiles</div>
+                <div class="output-line"></div>
+                
+                <div id="profilesList" class="profiles-list">
+                    <div class="output-line">[No profiles registered yet]</div>
+                </div>
+                
+                <div class="output-line"></div>
+            </div>
+
+            <div class="command-line cursor">
+                <span class="prompt">C:\Users\NamelessPyro\Profiles></span> <span class="input">_</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-bar">
+        <a href="index.html" class="nav-link">← Home</a>
+        <a href="files.html" class="nav-link">Forum →</a>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 NamelessPyro | Profiles v1.0</p>
+        </div>
+    </footer>
+
+    <script src="profiles.js"></script>
+</body>
+</html>
